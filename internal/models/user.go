@@ -148,3 +148,29 @@ func GetUserByRefreshToken(refreshToken string, platform string) (*User, error) 
 
 	return &user, nil
 }
+
+func GetUserByID(userId int64) (*User, error) {
+
+	db, err := db.GetDB()
+	if err != nil {
+		return nil, err
+	}
+
+	var user User
+	err = db.QueryRow("SELECT id, name, email, password, refresh_token_web, refresh_token_web_at, refresh_token_mobile, refresh_token_mobile_at, created_at FROM users WHERE id = ?", userId).Scan(
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.Password,
+		&user.RefreshTokenWeb,
+		&user.RefreshTokenWebAt,
+		&user.RefreshTokenMobile,
+		&user.RefreshTokenMobileAt,
+		&user.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
