@@ -1,0 +1,135 @@
+@baseUrl = http://localhost:8082
+@contentType = application/json
+@accessTokenWeb = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJuYW1lIjoiQW5vdGhlciBVc2VyIiwiWC1QbGF0Zm9ybSI6IndlYiIsInN1YiI6IjEiLCJleHAiOjE3NzMwMDQxNDZ9.lrC20HcIYNVKG-EzP_pGk3m4v7prgS7i0Gt_XNA31rk
+@accessTokenMobile = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJuYW1lIjoiQW5vdGhlciBVc2VyIiwiWC1QbGF0Zm9ybSI6Im1vYmlsZSIsInN1YiI6IjEiLCJleHAiOjE3NzMwMDM0OTN9.b9EUrfvKyIQMN_i2H9LlpsuZu833qelcBme2PI2hj44
+@refreshTokenWeb = LC-DAgN0QCaKSjPJwbLy_IC8F07sDmQyH-rJnkYEFXQ=
+@refreshTokenMobile = REPLACE_WITH_MOBILE_REFRESH_TOKEN
+
+
+### Health check
+GET {{baseUrl}}/api/health-check-http
+Accept: application/json
+
+
+### Register user - success
+POST {{baseUrl}}/api/auth/register-email
+Content-Type: {{contentType}}
+Accept: application/json
+
+{
+	"name": "Ashraf Aaref",
+	"email": "ashraf@example.com",
+	"password": "Pass@12345"
+}
+
+
+### Register user - missing fields (400)
+POST {{baseUrl}}/api/auth/register-email
+Content-Type: {{contentType}}
+Accept: application/json
+
+{
+	"name": "",
+	"email": "",
+	"password": ""
+}
+
+
+### Register user - duplicate email (409)
+POST {{baseUrl}}/api/auth/register-email
+Content-Type: {{contentType}}
+Accept: application/json
+
+{
+	"name": "Another User",
+	"email": "ashraf@example.com",
+	"password": "Pass@12345"
+}
+
+
+### Login email - success (web)
+POST {{baseUrl}}/api/auth/login-email
+Content-Type: {{contentType}}
+Accept: application/json
+X-Platform: web
+
+{
+	"email": "ashraf@example.com",
+	"password": "Pass@12345"
+}
+
+
+### Login email - success (mobile)
+POST {{baseUrl}}/api/auth/login-email
+Content-Type: {{contentType}}
+Accept: application/json
+X-Platform: mobile
+
+{
+	"email": "ashraf@example.com",
+	"password": "Pass@12345"
+}
+
+
+### Login email - invalid platform (400)
+POST {{baseUrl}}/api/auth/login-email
+Content-Type: {{contentType}}
+Accept: application/json
+X-Platform: desktop
+
+{
+	"email": "ashraf@example.com",
+	"password": "Pass@12345"
+}
+
+
+### Login email - invalid credentials (401)
+POST {{baseUrl}}/api/auth/login-email
+Content-Type: {{contentType}}
+Accept: application/json
+X-Platform: web
+
+{
+	"email": "ashraf@example.com",
+	"password": "WrongPass"
+}
+
+
+### Logout (requires login token)
+POST {{baseUrl}}/api/auth/logout
+Accept: application/json
+Authorization: Bearer {{accessTokenWeb}}
+X-Platform: web
+
+
+### Refresh session (web)
+POST {{baseUrl}}/api/auth/refresh-session
+Content-Type: {{contentType}}
+Accept: application/json
+X-Platform: web
+
+{
+	"refresh_token": "{{refreshTokenWeb}}"
+}
+
+
+### Refresh session (mobile)
+POST {{baseUrl}}/api/auth/refresh-session
+Content-Type: {{contentType}}
+Accept: application/json
+X-Platform: mobile
+
+{
+	"refresh_token": "{{refreshTokenMobile}}"
+}
+
+### Current User
+GET {{baseUrl}}/api/auth/current-user
+Content-Type: {{contentType}}
+Accept: application/json
+Authorization: Bearer {{accessTokenWeb}}
+X-Platform: web
+
+{
+	"refresh_token": "{{refreshTokenWeb}}"
+}
