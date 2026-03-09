@@ -22,14 +22,17 @@ func RegisterRoutes() http.Handler {
 	// Users routes
 	mux.Handle("GET /api/users/{id}", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleGetUserByID)))
 
-	middlewareHandlerMux := registerMiddleWares(mux)
+	// Conversations routes
+	mux.Handle("GET /api/conversations/privates/{private_id}", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleGetPrivate)))
+	mux.Handle("POST /api/conversations/privates/create", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleJoinPrivate)))
+	mux.Handle("GET /api/conversations", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleGetConversations)))
+	mux.Handle("GET /api/conversations/privates/{private_id}/messages", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleGetPrivateMessages)))
+
+	// Files Routes
+	mux.Handle("POST /api/files/{private_id}", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleFileUpload)))
+	mux.Handle("GET /api/files", middlewares.AuthenticateHandler(handlers.HandleGetFile()))
+
+	middlewareHandlerMux := middlewares.RegisterMiddleWares(mux)
 
 	return middlewareHandlerMux
-}
-
-func registerMiddleWares(mux *http.ServeMux) http.Handler {
-	middlewareMux := middlewares.LoggingMiddleware(mux)
-	middlewareMux = middlewares.CorsMiddleware(middlewareMux)
-
-	return middlewareMux
 }
