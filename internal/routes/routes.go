@@ -11,6 +11,7 @@ func RegisterRoutes() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /api/health-check-http", handlers.HandleHealthCheckHTTP)
+	mux.HandleFunc("GET /api/health-check-ws", handlers.HandleHealthCheckWs)
 
 	// Authentication routes
 	mux.HandleFunc("POST /api/auth/register-email", handlers.HandleEmailRegistration)

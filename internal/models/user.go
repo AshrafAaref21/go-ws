@@ -174,3 +174,11 @@ func GetUserByID(userId int64) (*User, error) {
 
 	return &user, nil
 }
+
+func (u *User) ToMap() map[string]any {
+	return map[string]any{
+		"id":    u.ID,
+		"name":  u.Name,
+		"email": u.Email,
+	}
+}

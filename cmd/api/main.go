@@ -11,6 +11,7 @@ import (
 
 	"github.com/AshrafAaref21/go-ws/internal/config"
 	"github.com/AshrafAaref21/go-ws/internal/db"
+	"github.com/AshrafAaref21/go-ws/internal/realtime"
 	"github.com/AshrafAaref21/go-ws/internal/routes"
 	"github.com/AshrafAaref21/go-ws/internal/utils"
 )
@@ -32,6 +33,9 @@ func main() {
 			log.Printf("Failed to close database: %v", err)
 		}
 	}()
+
+	hub := realtime.NewHub()
+	defer hub.Shutdown()
 
 	server := &http.Server{
 		Addr:    cfg.HTTPServer.Address,
@@ -59,5 +63,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Server failed to shutdown: %v", err)
 	}
+
 	log.Println("Server gracefully stopped.")
 }
