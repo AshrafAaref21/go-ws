@@ -1,0 +1,45 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/bin/
+/dist/
+
+# Build output
+*.out
+
+# Go workspace
+go.work
+go.work.sum
+
+# Dependency directories
+vendor/
+
+# Test binary
+*.test
+
+# Coverage output
+*.coverprofile
+coverage.out
+
+# Environment / secrets
+*.env
+!config/dev.env
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+sqlite/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
