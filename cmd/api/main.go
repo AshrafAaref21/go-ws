@@ -21,7 +21,6 @@ func main() {
 	utils.InitJWT(cfg.JWTKey)
 
 	// mux.HandleFunc("GET /api/health-check-http", handlers.HandleHealthCheckHTTP)
-	mux := routes.RegisterRoutes()
 
 	err := db.InitDB(cfg.DBPath, cfg.DBName)
 	if err != nil {
@@ -36,6 +35,8 @@ func main() {
 
 	hub := realtime.NewHub()
 	defer hub.Shutdown()
+
+	mux := routes.RegisterRoutes(hub)
 
 	server := &http.Server{
 		Addr:    cfg.HTTPServer.Address,

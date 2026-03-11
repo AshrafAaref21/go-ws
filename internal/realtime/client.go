@@ -9,7 +9,7 @@ import (
 
 type Client struct {
 	User *models.User    `json:"user"`
-	conn *websocket.Conn `json:"-"`
+	Conn *websocket.Conn `json:"-"`
 	Send chan Event      `json:"-"`
 	once sync.Once       `json:"-"`
 }
@@ -17,7 +17,7 @@ type Client struct {
 func NewClient(user *models.User, conn *websocket.Conn) *Client {
 	return &Client{
 		User: user,
-		conn: conn,
+		Conn: conn,
 		Send: make(chan Event, 512),
 	}
 }
@@ -31,8 +31,8 @@ func (c *Client) SendEvent(event Event) {
 
 func (c *Client) Close() {
 	c.once.Do(func() {
-		if c.conn != nil {
-			c.conn.Close(websocket.StatusNormalClosure, "Connection closed")
+		if c.Conn != nil {
+			c.Conn.Close(websocket.StatusNormalClosure, "Connection closed")
 		}
 		close(c.Send)
 	})

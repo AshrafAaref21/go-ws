@@ -5,9 +5,10 @@ import (
 
 	"github.com/AshrafAaref21/go-ws/internal/handlers"
 	"github.com/AshrafAaref21/go-ws/internal/middlewares"
+	"github.com/AshrafAaref21/go-ws/internal/realtime"
 )
 
-func RegisterRoutes() http.Handler {
+func RegisterRoutes(hub *realtime.Hub) http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /api/health-check-http", handlers.HandleHealthCheckHTTP)
@@ -18,7 +19,7 @@ func RegisterRoutes() http.Handler {
 	mux.HandleFunc("POST /api/auth/login-email", handlers.HandleEmailLogin)
 	mux.HandleFunc("POST /api/auth/refresh-session", handlers.HandleRefreshSession)
 	mux.Handle("POST /api/auth/logout", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleEmailLogout)))
-	mux.Handle("GET /api/auth/current-user", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleCurrentUser)))
+	mux.Handle("POST /api/auth/current-user", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleCurrentUser)))
 
 	// Users routes
 	mux.Handle("GET /api/users/{id}", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleGetUserByID)))
@@ -31,7 +32,12 @@ func RegisterRoutes() http.Handler {
 
 	// Files Routes
 	mux.Handle("POST /api/files/{private_id}", middlewares.AuthenticateMiddleware(http.HandlerFunc(handlers.HandleFileUpload)))
-	mux.Handle("GET /api/files", middlewares.AuthenticateHandler(handlers.HandleGetFile()))
+	mux.Handle("GET /api/files/", middlewares.AuthenticateHandler(handlers.HandleGetFile()))
+
+	// WebSockets Route
+	mux.HandleFunc("/api/ws", func(w http.ResponseWriter, r *http.Request) {
+		handlers.HandleWebSocket(hub, w, r)
+	})
 
 	middlewareHandlerMux := middlewares.RegisterMiddleWares(mux)
 
